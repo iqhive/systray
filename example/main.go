@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"fyne.io/systray"
-	"fyne.io/systray/example/icon"
+	"github.com/iqhive/systray"
+	"github.com/iqhive/systray/example/icon"
 )
 
 func main() {
@@ -21,12 +21,10 @@ func main() {
 
 func addQuitItem() {
 	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
-	go func() {
-		for range mQuit.ClickedCh {
-			fmt.Println("Requesting quit")
-			systray.Quit()
-		}
-	}()
+	mQuit.ClickedFn = func() {
+		fmt.Println("Requesting quit")
+		systray.Quit()
+	}
 }
 
 func onReady() {
@@ -80,59 +78,43 @@ func onReady() {
 		}
 		mReset := systray.AddMenuItem("Reset", "Reset all items")
 
-		go func() {
-			for range mChange.ClickedCh {
-				mChange.SetTitle("I've Changed")
+		mChange.ClickedFn = func() {
+			mChange.SetTitle("I've Changed")
+		}
+		mChecked.ClickedFn = func() {
+			if mChecked.Checked() {
+				mChecked.Uncheck()
+				mChecked.SetTitle("Unchecked")
+			} else {
+				mChecked.Check()
+				mChecked.SetTitle("Checked")
 			}
-		}()
-		go func() {
-			for range mChecked.ClickedCh {
-				if mChecked.Checked() {
-					mChecked.Uncheck()
-					mChecked.SetTitle("Unchecked")
-				} else {
-					mChecked.Check()
-					mChecked.SetTitle("Checked")
-				}
-			}
-		}()
-		go func() {
-			for range mAllowRemoval.ClickedCh {
-				systray.SetRemovalAllowed(true)
-				go func() {
-					time.Sleep(5 * time.Second)
-					fmt.Printf("Time's up! setting back to no-removal-allowed on macOS.\n")
-					systray.SetRemovalAllowed(false)
-				}()
-			}
-		}()
-		go func() {
-			for range mEnabled.ClickedCh {
-				mEnabled.SetTitle("Disabled")
-				mEnabled.Disable()
-			}
-		}()
-		go func() {
-			for range subMenuBottom2.ClickedCh {
-				panic("panic button pressed")
-			}
-		}()
-		go func() {
-			for range subMenuBottom.ClickedCh {
-				toggle()
-			}
-		}()
-		go func() {
-			for range mReset.ClickedCh {
-				systray.ResetMenu()
-				addQuitItem()
-			}
-		}()
-		go func() {
-			for range mToggle.ClickedCh {
-				toggle()
-			}
-		}()
+		}
+		mAllowRemoval.ClickedFn = func() {
+			systray.SetRemovalAllowed(true)
+			go func() {
+				time.Sleep(5 * time.Second)
+				fmt.Printf("Time's up! setting back to no-removal-allowed on macOS.\n")
+				systray.SetRemovalAllowed(false)
+			}()
+		}
+		mEnabled.ClickedFn = func() {
+			mEnabled.SetTitle("Disabled")
+			mEnabled.Disable()
+		}
+		subMenuBottom2.ClickedFn = func() {
+			panic("panic button pressed")
+		}
+		subMenuBottom.ClickedFn = func() {
+			toggle()
+		}
+		mReset.ClickedFn = func() {
+			systray.ResetMenu()
+			addQuitItem()
+		}
+		mToggle.ClickedFn = func() {
+			toggle()
+		}
 		go func() {
 			for range systray.TrayOpenedCh {
 				trayOpenedCount++
