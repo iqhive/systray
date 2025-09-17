@@ -43,6 +43,9 @@ type MenuItem struct {
 	// ClickedCh is the channel which will be notified when the menu item is clicked
 	ClickedCh chan struct{}
 
+	// ClickedFn that will be called when the menu item is clicked.
+	ClickedFn func()
+
 	// id uniquely identify a menu item, not supposed to be modified
 	id uint32
 	// title is the text shown on menu item
@@ -307,5 +310,8 @@ func systrayMenuItemSelected(id uint32) {
 	case item.ClickedCh <- struct{}{}:
 	// in case no one waiting for the channel
 	default:
+	}
+	if item.ClickedFn != nil {
+		item.ClickedFn()
 	}
 }
