@@ -1,8 +1,8 @@
 # Systray
 
 systray is a cross-platform Go library to place an icon and menu in the notification area.
-This repository is a fork of [getlantern/systray](https://github.com/getlantern/systray)
-removing the GTK dependency and support for legacy linux system tray.
+This repository is a fork of [fyne-io/systray](https://github.com/fyne-io/systray) to add
+support for callbacks that run on the mainthread (this is important on macOS).
 
 ## Features
 
@@ -15,8 +15,8 @@ removing the GTK dependency and support for legacy linux system tray.
 ```go
 package main
 
-import "fyne.io/systray"
-import "fyne.io/systray/example/icon"
+import "github.com/iqhive/systray"
+import "github.com/iqhive/systray/example/icon"
 
 func main() {
 	systray.Run(onReady, onExit)
@@ -37,27 +37,6 @@ func onExit() {
 }
 ```
 
-### Running in a Fyne app
-
-This repository is designed to allow any toolkit to integrate system tray without any additional dependencies.
-It is maintained by the Fyne team, but if you are using Fyne there is an even easier to use API in the main repository that wraps this project.
-
-In your app you can use a standard `fyne.Menu` structure and pass it to `SetSystemTrayMenu` when your app is a desktop app, as follows:
-
-```go
-	menu := fyne.NewMenu("MyApp",
-		fyne.NewMenuItem("Show", func() {
-			log.Println("Tapped show")
-		}))
-
-	if desk, ok := myApp.(desktop.App); ok {
-		desk.SetSystemTrayMenu(menu)
-	}
-```
-
-You can find out more in the toolkit documentation:
-[System Tray Menu](https://developer.fyne.io/explore/systray).
-
 ### Run in another toolkit
 
 Most graphical toolkits will grab the main loop so the `Run` code above is not possible.
@@ -74,7 +53,7 @@ Note: this package requires cgo, so make sure you set `CGO_ENABLED=1` before bui
 Have go v1.12+ or higher installed? Here's an example to get started on macOS or Linux:
 
 ```sh
-git clone https://github.com/fyne-io/systray
+git clone https://github.com/iqhive/systray
 cd systray/example
 go run .
 ```
@@ -142,6 +121,7 @@ icon off the menu bar.
 
 ## Credits
 
+- https://github.com/fyne-io/systray
 - https://github.com/getlantern/systray
 - https://github.com/xilp/systray
 - https://github.com/cratonica/trayhost
